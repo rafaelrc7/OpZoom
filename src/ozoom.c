@@ -22,7 +22,7 @@
  * SOFTWARE.
  *******************************************************************************/
 
-/* Version 1.1 */
+/* Version 2.0 */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,11 +45,14 @@ typedef struct s_class
 
 } Class;
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	time_t t;
 	struct tm tm;
 	int n_classes = 7, i;
+	int p_classesn = 0;
+	Class *p_classes[2];
+	Class *s_class = NULL;
 
 	Class classes[7] = {
 		{.codigo_disciplina="FOO1234", .meeting_id="91749443861", .meeting_pass="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", .dias = (SEGUNDA | QUARTA | SEXTA), .time = 11},
@@ -64,14 +67,42 @@ int main(int argc, char *argv[])
 	t = time(NULL);
 	tm = *localtime(&t);
 
-	for (i = 0; i < n_classes; ++i) {
-		if (classes[i].dias & dmap[tm.tm_wday] && ((tm.tm_hour >= classes[i].time && tm.tm_hour < classes[i].time+2) || (tm.tm_hour == classes[i].time-1 && tm.tm_min >= 55) )) {
-			char link[84], cmd[95];
+	for (i = n_classes-1; i >= 0; --i) {
+		if (classes[i].dias & dmap[tm.tm_wday] && ((tm.tm_hour >= classes[i].time && tm.tm_hour < classes[i].time+2) || (tm.tm_hour == classes[i].time-1 && tm.tm_min >= 45) )) {
+			p_classes[p_classesn++] = &classes[i];
+			if (p_classesn == 2) break;
+		}
+	}
 
-			snprintf(link, 84, "zoommtg://zoom.us/join?confno=%s&pwd=%s&zc=0", classes[i].meeting_id, classes[i].meeting_pass);
-			printf("Aula %s (%02d:00), zoom link: %s\nDeseja abrir o Zoom? [Y/n] ", classes[i].codigo_disciplina, classes[i].time, link);
+	if (p_classesn == 1) {
+		s_class = p_classes[0];
+	} else {
+		char c;
+		printf("1. %s (%02d:00)\n2. %s (%02d:00)\n3. CANCELAR\n\n> ",
+				p_classes[0]->codigo_disciplina, p_classes[0]->time,
+				p_classes[1]->codigo_disciplina, p_classes[1]->time);
 
-			if (getchar() == 'n') continue;
+		c = getchar();
+		switch (c) {
+			default:
+			case '1':
+				s_class = p_classes[0];
+				break;
+			case '2':
+				s_class = p_classes[1];
+				break;
+			case '3':
+				s_class = NULL;
+		}
+	}
+
+	if (s_class) {
+		char link[84], cmd[95];
+
+		snprintf(link, 84, "zoommtg://zoom.us/join?confno=%s&pwd=%s&zc=0", s_class->meeting_id, s_class->meeting_pass);
+		printf("Aula %s (%02d:00), zoom link: %s\nDeseja abrir o Zoom? [Y/n] ", s_class->codigo_disciplina, s_class->time, link);
+
+		if (getchar() != 'n') {
 
 			printf("Abrindo Zoom...\n");
 
@@ -90,9 +121,10 @@ int main(int argc, char *argv[])
 #else
 			printf("$ %s\n", cmd);
 #endif
-
-			break;
 		}
+
+	} else {
+		printf("Nenhuma aula selecionada.\n");
 	}
 
 	return 0;
