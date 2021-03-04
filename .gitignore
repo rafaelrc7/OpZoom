@@ -1,5 +1,6 @@
 dep/
 obj/
+win-lib/
 ozoom
 *.exe
 *.lua
