@@ -2,3 +2,4 @@ dep/
 obj/
 ozoom
 *.exe
+*.lua

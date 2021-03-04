@@ -11,7 +11,7 @@ CC=gcc
 EXT=.c
 
 CCFLAGS=-g -O0 -Wall -Wextra -pedantic
-LDFLAGS=-I$(LIBDIR)
+LDFLAGS=-I$(LIBDIR) -llua
 
 
 ##########AUTO##########
