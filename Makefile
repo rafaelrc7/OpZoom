@@ -10,7 +10,7 @@ LIBDIR=lib
 CC=gcc
 EXT=.c
 
-CCFLAGS=-g -O0 -Wall -Wextra -pedantic -D DEBUG
+CCFLAGS=-g -O0 -Wall -Wextra -pedantic
 LDFLAGS=-I$(LIBDIR)
 
 
