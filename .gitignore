@@ -1,6 +1,7 @@
 dep/
 obj/
 win-lib/
+.ccls-cache/
 ozoom
 *.exe
 *.lua
