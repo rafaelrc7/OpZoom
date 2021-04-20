@@ -18,7 +18,7 @@ gcc -O2 -o opzoom ozoom.c -D _NO_LUA
 
 ## Example meeting configuration
 
-# With lua support, create a zoom_classes.lua like this:
+### With lua support, create a zoom_classes.lua like this:
 
 ```lua
 CLASSES = {
@@ -27,7 +27,7 @@ CLASSES = {
 }
 ```
 
-# Without lua support:
+### Without lua support:
 
 Check example inside the source file.
 
