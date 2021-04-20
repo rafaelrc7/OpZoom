@@ -65,7 +65,8 @@
 
 enum wdays
 {
-	DOMINGO=0x1, SEGUNDA=0x2, TERCA=0x4, QUARTA=0x8, QUINTA=0x10, SEXTA=0x20, SABADO=0x40
+	DOMINGO=0x1, SEGUNDA=0x2, TERCA=0x4, QUARTA=0x8, QUINTA=0x10, SEXTA=0x20, SABADO=0x40,
+	SUNDAY=0x1, MONDAY=0x2, TUESDAY=0x4, WEDNESDAY=0x8, THURSDAY=0x10, FRIDAY=0x20, SATURDAY=0x40,
 };
 
 const enum wdays dmap[7] = {DOMINGO, SEGUNDA, TERCA, QUARTA, QUINTA, SEXTA, SABADO};
@@ -99,7 +100,7 @@ int main(void)
 	Class *s_class = NULL;
 
 #ifdef _NO_LUA
-	/* EXEMPLO */
+	/* EXAMPLE */
 	Class classes[1] = {
 		{.discipline_code="FOO1234", .meeting_id="00000000000", .meeting_pass="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", .days = (SEGUNDA | QUARTA | SEXTA), .time = 7},
 	};
@@ -133,7 +134,7 @@ int main(void)
 
 	switch (p_classesn) {
 		case 0:
-			fprintf(stderr, "ERRO: nenhuma aula encontrada\n");
+			fprintf(stderr, "ERROR: No meeting found\n");
 			exit(EXIT_FAILURE);
 			break;
 		case 1:
@@ -142,7 +143,7 @@ int main(void)
 		default:
 		{
 			char c;
-			printf("1. %s (%02d:00)\n2. %s (%02d:00)\n3. CANCELAR\n\n> ",
+			printf("1. %s (%02d:00)\n2. %s (%02d:00)\n3. CANCEL\n\n> ",
 					p_classes[0]->discipline_code, p_classes[0]->time,
 					p_classes[1]->discipline_code, p_classes[1]->time);
 
@@ -166,18 +167,18 @@ int main(void)
 		char link[84], cmd[95];
 
 		snprintf(link, 84, "zoommtg://zoom.us/join?confno=%s&pwd=%s&zc=0", s_class->meeting_id, s_class->meeting_pass);
-		printf("Aula %s (%02d:00), zoom link: %s\nDeseja abrir o Zoom? [Y/n] ", s_class->discipline_code, s_class->time, link);
+		printf("Meeting %s (%02d:00), zoom link: %s\nOpen zoom? [Y/n] ", s_class->discipline_code, s_class->time, link);
 
 		if (getchar() != 'n') {
 
-			printf("Abrindo Zoom...\n");
+			printf("Opening Zoom...\n");
 
 #ifdef __linux__
 			snprintf(cmd, 95, "xdg-open \"%s\"", link);
 #elif _WIN32
 			snprintf(cmd, 95, "start \"\" \"%s\"", link);
 #else
-			fprintf(stderr, "ERRO: Sistema Operacional não reconhecido/suportado!\n");
+			fprintf(stderr, "ERROR: OS not recognised/supported!\n");
 			exit(EXIT_FAILURE);
 #endif
 
@@ -190,7 +191,7 @@ int main(void)
 		}
 
 	} else {
-		printf("Nenhuma aula selecionada.\n");
+		printf("No meeting selected.\n");
 	}
 
 #ifndef _NO_LUA
@@ -210,12 +211,19 @@ void lua_create_global_int(lua_State *L, const char *name, int value)
 void lua_set_wday_constants(lua_State *L)
 {
 	lua_create_global_int(L, "DOMINGO", dmap[0]);
+	lua_create_global_int(L, "SUNDAY", dmap[0]);
 	lua_create_global_int(L, "SEGUNDA", dmap[1]);
+	lua_create_global_int(L, "MONDAY", dmap[1]);
 	lua_create_global_int(L, "TERCA", dmap[2]);
+	lua_create_global_int(L, "TUESDAY", dmap[2]);
 	lua_create_global_int(L, "QUARTA", dmap[3]);
+	lua_create_global_int(L, "WEDNESDAY", dmap[3]);
 	lua_create_global_int(L, "QUINTA", dmap[4]);
+	lua_create_global_int(L, "THURSDAY", dmap[4]);
 	lua_create_global_int(L, "SEXTA", dmap[5]);
+	lua_create_global_int(L, "FRIDAY", dmap[5]);
 	lua_create_global_int(L, "SABADO", dmap[6]);
+	lua_create_global_int(L, "SATURDAY", dmap[6]);
 }
 
 int lua_get_table_string(lua_State *L, const char *field_name, char *dest, size_t len)
