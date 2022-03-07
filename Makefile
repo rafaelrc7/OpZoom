@@ -29,17 +29,19 @@ all: $(TARGET)
 $(TARGET): $(OBJ)
 	$(CC) $(LDFLAGS) -o $@ $^
 
-$(DEPDIR)/%.d: $(SRCDIR)/%$(EXT)
+$(DEPDIR)/%.d: $(SRCDIR)/%$(EXT) | $(DEPDIR)
 	@$(CC) $(CFLAGS) $< -MM -MT $(@:$(DEPDIR)/%.d=$(OBJDIR)/%.o) >$@
 
 -include $(DEP)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%$(EXT)
+$(OBJDIR)/%.o: $(SRCDIR)/%$(EXT) | $(OBJDIR)
 	$(CC) $(CCFLAGS) -o $@ -c $<
 
+$(SRCDIR) $(OBJDIR) $(DEPDIR):
+	mkdir -p $@
 
 ##########CLEAN##########
 
 .PHONY: clean
 clean:
-	rm $(OBJ) $(DEP) $(TARGET)
+	rm -r $(OBJDIR) $(DEPDIR) $(TARGET)
